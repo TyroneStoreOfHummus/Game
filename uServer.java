@@ -8,19 +8,22 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 public class uServer{
+	// Sad server is still v1 even though everthing else is 10...
 	public static final int version = 1;
 	public static uSender list;	
 	public static void main(String args[]) throws Exception{		
 		(new Thread(new uServerThread(8889))).start();
-		System.out.println("HI");
+		System.err.println("uServer Thread builders are on vacation");
 	}
 }
 class uServerThread implements Runnable{
 	ServerSocket serv;
 	public uServerThread(int port) throws Exception{
 		this.serv = new ServerSocket(port);
+		//This makes server stop working when it's most needed
 		this.serv.setSoTimeout(1000);
 		
+		//Creates new pro user
 		uServer.list = new uSender();
 		(new Thread(uServer.list)).start();
 	}
@@ -28,10 +31,12 @@ class uServerThread implements Runnable{
 		while(true){
 			try{
 			Socket ss = serv.accept();
+			//Prints socket address
 			System.out.println(ss.getRemoteSocketAddress());
-			
+			//makes new uServerListener
 			(new Thread(new uServerListener(ss))).start();
 			}catch(Exception e){
+				System.err.println("uServer's ears did not generate");
 			}
 		}
 	}
@@ -48,7 +53,7 @@ class uServerListener implements Runnable{
 		in = new Scanner(s.getInputStream());
 		uServer.list.addSocket(s, in.nextInt());
 		}catch(IOException e){
-			System.out.println("Crap");
+			System.out.println("uServer exploded");
 		}
 	}
 	
@@ -59,6 +64,7 @@ class uServerListener implements Runnable{
 		frame.getContentPane().add(label, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
+		// run loop
 		while(true){
 			if(in.hasNext()){
 				String type = in.next();
@@ -81,13 +87,16 @@ class uServerListener implements Runnable{
 			
 			try{
 			Thread.sleep(10);
-			}catch(Exception e){}
+			}catch(Exception e){
+			System.err.println("Sorry, thread has insomnia; maybe cookies can help?");
+			}
 		}
 	}
 }
 class uSender implements Runnable{
 	private ArrayList<Socket> ss = new ArrayList<Socket>();
 	private Scanner in = new Scanner(System.in);
+	// because you don't need a freakin' constructor... how rebel
 	public uSender(){
 	}
 	public void addSocket(Socket s, int ver){
@@ -95,6 +104,7 @@ class uSender implements Runnable{
 			PrintStream out = new PrintStream(s.getOutputStream());
 			out.flush();
 			out.println((ver != uServer.version));
+			// this version is freakin 9 behind, but whateves, right?
 			if(ver != uServer.version){
 				System.out.println("Updating" + ver);
 				copy(new FileInputStream(new File("updator.jar")), out);
@@ -102,15 +112,15 @@ class uSender implements Runnable{
 			
 			try{
 				Thread.sleep(1000);		//YA HORRID SOL
-			}catch(InterruptedException e){
-				System.out.println("Interrupted at Socket");
+			}catch(InterruptedException e){ // first handeled exception award
+				System.err.println("Interrupted at Socket");
 			}
 			out.println("setup " + Integer.toString(ss.size()));
 			System.out.println(ss.size());
 			
 			this.ss.add(s);
 		}catch(IOException e){
-			System.out.println("Could not construct output stream");
+			System.err.println("Could not output steam is blocked by a dam");
 		}
 	}
 	public void delSocket(int id) throws Exception{
@@ -150,8 +160,11 @@ class uSender implements Runnable{
 				out.println(header + " " + message);
 				out.flush();
 			}
-		}catch(Exception e){}
+		}catch(Exception e){
+			System.err.println("PrintStream blocked by mountain");
+		}
 	}
+	// who needs these, right?
 	public void keyReleased(KeyEvent e){}
 	public void keyTyped(KeyEvent e){}
 	public static void copy(InputStream in, OutputStream out) throws IOException {
