@@ -17,14 +17,19 @@ public class updator{
 		setUp(s);				
 	}
 	public static String getURL(){		//Return the URL
-		URL web = new URL("http://leedavida.my-free.website/");
+      try {
+      	URL web = new URL("http://leedavida.my-free.website/");
 		Scanner inSt = new Scanner(web.openStream());
 
 		String inputLine = "";
 		while (!inputLine.equals("connectTo")){
 		    inputLine = inSt.next();
 		}	
-		return in.next();
+		return inSt.next();
+      } catch (Exception e) {
+      	System.err.println("where da url go?");
+        return "...";
+      }
 	}
 
 	public static void copy(InputStream in, OutputStream out) throws IOException {		//Copies input to output stream -- Copied from StackOverflow
