@@ -152,7 +152,7 @@ class commands implements Runnable{		//Command decoder
 						out.write(bOut.toByteArray());
 						out.flush();
 					}
-					Thread.sleep(10);
+					Thread.sleep(1000);
 				}catch(Exception e){e.printStackTrace();}
 			}
 		}catch(Exception e){
