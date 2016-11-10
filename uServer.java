@@ -13,7 +13,7 @@ public class uServer{
 	public static uSender list;	
 	public static void main(String args[]) throws Exception{		
 		(new Thread(new uServerThread(8889))).start();
-		System.out.println("uServer Thread builders are on vacation");
+		System.out.println("uServer Thread builders are up");
 	}
 }
 class uServerThread implements Runnable{
