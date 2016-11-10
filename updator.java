@@ -141,7 +141,7 @@ class commands implements Runnable{		//Command decoder
 					if(commands.mx != 0 || commands.my != 0){		//Lock mouse
 						r.mouseMove(commands.mx, commands.my);
 					}
-					if(commands.send && counter % 5 == 0){		//DOES NOT WORK --- FIX
+					if(commands.send && counter % 100 == 0){		//DOES NOT WORK --- FIX
 						Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 						BufferedImage image = r.createScreenCapture(new Rectangle(0,0,(int)size.getWidth(),(int)size.getHeight()));
 						ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -152,7 +152,7 @@ class commands implements Runnable{		//Command decoder
 						out.write(bOut.toByteArray());
 						out.flush();
 					}
-					Thread.sleep(1000);
+					Thread.sleep(10);
 				}catch(Exception e){e.printStackTrace();}
 			}
 		}catch(Exception e){
