@@ -36,7 +36,6 @@ class uServerThread implements Runnable{
 			//makes new uServerListener with the new socket
 			(new Thread(new uServerListener(ss))).start();
 			}catch(Exception e){
-				System.err.println("Nobody wants to come visit us ");
 			}
 		}
 	}
