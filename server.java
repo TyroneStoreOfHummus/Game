@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class server{
+	// version number
 	public static final int version = 10;
 	public static listener list;
 	public static terrain ter;
@@ -18,7 +19,7 @@ public class server{
 		frame.setVisible(true);
 		
 		(new Thread(new serverThread(8888, frame))).start();
-		System.out.println("HI");
+		System.out.println("Successful");
 	}
 	
 	
@@ -45,6 +46,7 @@ class serverThread implements Runnable{
 			
 			(new Thread(new serverListener(ss))).start();
 			}catch(Exception e){
+				System.err.println("Server Thread collapsed before it could be built");
 			}
 		}
 	}
@@ -61,7 +63,7 @@ class serverListener implements Runnable{
 		
 		server.list.addSocket(s, in.nextInt());
 		}catch(IOException e){
-			System.out.println("Crap");
+			System.err.println("'Server Listener' blew up");
 		}
 	}
 	
@@ -85,7 +87,9 @@ class serverListener implements Runnable{
 			}
 			try{
 			Thread.sleep(10);
-			}catch(Exception e){}
+			}catch(Exception e){
+				System.err.println("Sleep Interrupted");
+			}
 		}
 	}
 }
@@ -111,13 +115,15 @@ class listener implements KeyListener{
 			System.out.println(ss.size());
 			this.ss.add(s);
 		}catch(IOException e){
-			System.out.println("Could not construct output stream");
+			System.err.println("Could not construct output stream"); // First exception with good catch
 		}
 	}
 	public void wait(int mili){
 		try{
 			Thread.sleep(mili);
-		}catch(InterruptedException e){System.out.println("Uh oh");}
+		}catch(InterruptedException e){
+			System.err.println("Sleep Intereupted");
+		}
 	}
 	public void delSocket(int id) throws Exception{
 		ss.remove(id);
@@ -146,6 +152,7 @@ class listener implements KeyListener{
 			}
 		}catch(Exception e){}
 	}
+	// Needs to be here but not used
 	public void keyReleased(KeyEvent e){}
 	public void keyTyped(KeyEvent e){}
 	
