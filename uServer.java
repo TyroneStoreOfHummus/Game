@@ -63,6 +63,7 @@ class uServerListener implements Runnable{
 		frame.getContentPane().add(label, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
+		BufferedImage render;
 		// run loop
 		while(true){
 			if(in.hasNext()){
@@ -72,10 +73,9 @@ class uServerListener implements Runnable{
 					System.out.println("IMAGE");
 					ByteArrayOutputStream img = new ByteArrayOutputStream();
 					uSender.copy(stream, img);
-					BufferedImage render = ImageIO.read(new ByteArrayInputStream(img.toByteArray()));
+					render = ImageIO.read(new ByteArrayInputStream(img.toByteArray()));
 					label.setIcon(new ImageIcon(render));
 					}catch(Exception e){
-						e.printStackTrace();
 					}
 				}else if(type.equals("info")){		//Yay Lets just DUMP all this random crap
 					System.out.println(s.getRemoteSocketAddress() + " : " + in.nextLine());					
