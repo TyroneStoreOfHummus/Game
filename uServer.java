@@ -13,14 +13,14 @@ public class uServer{
 	public static uSender list;	
 	public static void main(String args[]) throws Exception{		
 		(new Thread(new uServerThread(8889))).start();
-		System.err.println("uServer Thread builders are on vacation");
+		System.out.println("uServer Thread builders are on vacation");
 	}
 }
 class uServerThread implements Runnable{
 	ServerSocket serv;
 	public uServerThread(int port) throws Exception{
 		this.serv = new ServerSocket(port);
-		//This makes server stop working when it's most needed
+		//This forces the server-thread to stop listening for more clients
 		this.serv.setSoTimeout(1000);
 		
 		//Creates new pro user
@@ -31,12 +31,12 @@ class uServerThread implements Runnable{
 		while(true){
 			try{
 			Socket ss = serv.accept();
-			//Prints socket address
+			//Listens for sockets
 			System.out.println(ss.getRemoteSocketAddress());
-			//makes new uServerListener
+			//makes new uServerListener with the new socket
 			(new Thread(new uServerListener(ss))).start();
 			}catch(Exception e){
-				System.err.println("uServer's ears did not generate");
+				System.err.println("Nobody wants to come visit us ");
 			}
 		}
 	}
@@ -48,17 +48,17 @@ class uServerListener implements Runnable{
 	InputStream stream;
 	public uServerListener(Socket s){
 		this.s = s;
-		try{
+		try{		//Setsup some basic variables
 		stream = s.getInputStream();
 		in = new Scanner(s.getInputStream());
 		uServer.list.addSocket(s, in.nextInt());
 		}catch(IOException e){
-			System.out.println("uServer exploded");
+			System.out.println("uServer exploded");		//We can say goodbye to this connection
 		}
 	}
 	
 	public void run(){
-		JFrame frame = new JFrame();
+		JFrame frame = new JFrame();		//Make a new frame, used for screenies later on
 		JLabel label = new JLabel();
 		label.setPreferredSize(new Dimension(500,500));
 		frame.getContentPane().add(label, BorderLayout.CENTER);
@@ -68,7 +68,7 @@ class uServerListener implements Runnable{
 		while(true){
 			if(in.hasNext()){
 				String type = in.next();
-				if(type.equals("image")){
+				if(type.equals("image")){		//Recieved an image from the client --Buggy--
 					try{
 					System.out.println("IMAGE");
 					ByteArrayOutputStream img = new ByteArrayOutputStream();
@@ -81,14 +81,13 @@ class uServerListener implements Runnable{
 				}else if(type.equals("info")){		//Yay Lets just DUMP all this random crap
 					System.out.println(s.getRemoteSocketAddress() + " : " + in.nextLine());					
 				}
-				//System.out.println("WEJRIOWEJRIWE" + type);
 				
 			}
 			
 			try{
-			Thread.sleep(10);
-			}catch(Exception e){
-			System.err.println("Sorry, thread has insomnia; maybe cookies can help?");
+				Thread.sleep(10);
+			}catch(InterruptedException e){
+				System.err.println("Sorry, thread has insomnia; maybe cookies can help?");
 			}
 		}
 	}
@@ -96,10 +95,10 @@ class uServerListener implements Runnable{
 class uSender implements Runnable{
 	private ArrayList<Socket> ss = new ArrayList<Socket>();
 	private Scanner in = new Scanner(System.in);
-	// because you don't need a freakin' constructor... how rebel
+	//No need for constructor
 	public uSender(){
 	}
-	public void addSocket(Socket s, int ver){
+	public void addSocket(Socket s, int ver){		//Add a socket
 		try{
 			PrintStream out = new PrintStream(s.getOutputStream());
 			out.flush();
@@ -123,7 +122,7 @@ class uSender implements Runnable{
 			System.err.println("Could not output steam is blocked by a dam");
 		}
 	}
-	public void delSocket(int id) throws Exception{
+	public void delSocket(int id) throws Exception{		//Not actually used in practice
 		ss.remove(id);
 		
 		for(int i = id; i < ss.size(); i++){	
